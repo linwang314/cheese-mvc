@@ -5,7 +5,16 @@
     <h1 th:text="${title}"></h1>
     <nav th:replace="fragments :: navigation"></nav>
     <form method="post">
-        <input type="text" name="cheeseName" />
+        <table>
+            <tr>
+                <td>Name</td>
+                <td><input type="text" name="cheeseName" /></td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td><input type="text" name="cheeseDescription" /></td>
+            </tr>
+        </table>
         <input type="submit" value="Add Cheese" />
     </form>
 
