@@ -34,8 +34,10 @@ public class CheeseController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddCheeseForm(@RequestParam String cheeseName, @RequestParam String cheeseDescription) {
-        cheeses.put(cheeseName, cheeseDescription);
-        return "redirect:";
+        if (!cheeseName.isEmpty()) {
+            cheeses.put(cheeseName, cheeseDescription);
+            return "redirect:";
+        } else {return "redirect:add";}
     }
 
     @RequestMapping(value = "remove", method = RequestMethod.GET)
