@@ -1,6 +1,7 @@
 package org.launchcode.cheesemvc.controllers;
 
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.launchcode.cheesemvc.models.Cheese;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 @RequestMapping("cheese")
 public class CheeseController {
 
-    static HashMap<String, String> cheeses = new HashMap<>();
+    static ArrayList<Cheese> cheeses = new ArrayList<>();
 
     // Request path: /cheese
     @RequestMapping(value = "")
@@ -34,8 +35,10 @@ public class CheeseController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddCheeseForm(@RequestParam String cheeseName, @RequestParam String cheeseDescription) {
+
         if (!cheeseName.isEmpty()) {
-            cheeses.put(cheeseName, cheeseDescription);
+            Cheese aNewCheese = new Cheese(cheeseName, cheeseDescription);
+            cheeses.add(aNewCheese);
             return "redirect:";
         } else {return "redirect:add";}
     }
@@ -48,11 +51,21 @@ public class CheeseController {
     }
 
     @RequestMapping(value = "remove", method = RequestMethod.POST)
-    public String processRemoveCheeseForm(@RequestParam ArrayList<String> cheese) {
-        for (String eachCheese : cheese) {
-            System.out.println(eachCheese);
-            cheeses.remove(eachCheese);
+    public String processRemoveCheeseForm(@RequestParam ArrayList<Cheese> cheeseRemoved) {
+        /* *
+         * use nested loop to find out the cheeses to be removed from the original list
+         * cheeses.removeAll(cheeseRemoved) or cheeses.remove() did NOT work
+         * the elements in cheeseRemoved are different from those in cheeses even if they have the same value
+         * */
+
+        for (Cheese eachCheese : cheeseRemoved) {
+            int i = 0;
+            while (cheeses.get(0).getName().equals(eachCheese.getName())) {
+                i++;
+            }
+            cheeses.remove(i);
         }
+
         return "redirect:";
     }
 }
