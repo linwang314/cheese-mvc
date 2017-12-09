@@ -4,10 +4,7 @@ import org.launchcode.cheesemvc.models.Cheese;
 import org.launchcode.cheesemvc.models.CheeseData;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -64,4 +61,23 @@ public class CheeseController {
 
         return "redirect:";
     }
+
+    @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.GET)
+    public String displayEditForm(Model model, @PathVariable int cheeseId) {
+        Cheese theCheese = CheeseData.getById(cheeseId);
+        model.addAttribute("cheese", theCheese);
+        model.addAttribute("title", "Edit Cheese " + theCheese.getName() + " (id=" + theCheese.getCheeseId() + ")");
+
+        return "cheese/edit";
+    }
+
+    @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.POST)
+    public String processEditForm(@RequestParam int cheeseId, @RequestParam String name, @RequestParam String description) {
+        CheeseData.getById(cheeseId).setName(name);
+        CheeseData.getById(cheeseId).setDescription(description);
+
+        // "redirect:" doesn't work...
+        return "redirect:/cheese";
+    }
+
 }
