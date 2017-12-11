@@ -22,7 +22,7 @@ public class Cheese {
         return cheeseId;
     }
 
-    public void setCheeseId(int cheeseId) {
+    private void setCheeseId(int cheeseId) {
         this.cheeseId = cheeseId;
     }
 

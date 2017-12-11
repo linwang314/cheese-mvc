@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: index"></head>
-<body>
-<h1 th:text="${welcome}"></h1>
+<body class="container">
+    <h1 th:text="${title}"></h1>
+    <nav th:replace="fragments :: navigation"></nav>
+    <ul>
+        <li th:each="user : ${users}"><a th:href="@{${user.userId}}" th:text="${user.username}"></a></li>
+    </ul>
 </body>
 </html>

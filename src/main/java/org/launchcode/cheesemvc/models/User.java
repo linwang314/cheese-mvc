@@ -1,15 +1,19 @@
 package org.launchcode.cheesemvc.models;
 
+import java.util.Date;
+
 public class User {
 
     private int userId;
     private String username;
     private String email;
     private String password;
+    private final Date createDate;
     private static int nextId = 1;
 
     public User() {
         userId = nextId;
+        createDate = new Date();
         nextId++;
     }
 
@@ -20,11 +24,15 @@ public class User {
         this.password = password;
     }
 
+    public Date getCreateDate() {
+        return createDate;
+    }
+
     public int getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    private void setUserId(int userId) {
         this.userId = userId;
     }
 
