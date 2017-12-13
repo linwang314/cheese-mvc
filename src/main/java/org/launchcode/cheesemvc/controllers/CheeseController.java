@@ -2,10 +2,13 @@ package org.launchcode.cheesemvc.controllers;
 
 import org.launchcode.cheesemvc.models.Cheese;
 import org.launchcode.cheesemvc.models.CheeseData;
+import org.launchcode.cheesemvc.models.CheeseType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 
 @Controller
@@ -25,24 +28,22 @@ public class CheeseController {
     @RequestMapping(value = "add", method = RequestMethod.GET)
     public String displayAddCheeseForm(Model model) {
         model.addAttribute("title", "Add Cheese");
+        model.addAttribute("cheese", new Cheese());
+        model.addAttribute("cheeseTypes", CheeseType.values());
         return "cheese/add";
     }
-
+;
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String processAddCheeseForm(@ModelAttribute Cheese newCheese) {
+    public String processAddCheeseForm(@ModelAttribute @Valid Cheese newCheese, Errors errors, Model model) {
+
+        if (errors.hasErrors()){
+            model.addAttribute("title", "Add Cheese");
+            model.addAttribute("cheeseTypes", CheeseType.values());
+            return "cheese/add";
+        }
 
         CheeseData.add(newCheese);
         return "redirect:";
-
-        /** validation before model binding
-         *
-        if (!cheeseName.isEmpty()) {
-            Cheese newCheese = new Cheese(cheeseName, cheeseDescription);
-            CheeseData.add(newCheese);
-            return "redirect:";
-        } else {return "redirect:add";}
-
-         **/
     }
 
     @RequestMapping(value = "remove", method = RequestMethod.GET)
@@ -65,6 +66,7 @@ public class CheeseController {
     @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.GET)
     public String displayEditForm(Model model, @PathVariable int cheeseId) {
         Cheese theCheese = CheeseData.getById(cheeseId);
+        model.addAttribute("cheeseTypes", CheeseType.values());
         model.addAttribute("cheese", theCheese);
         model.addAttribute("title", "Edit Cheese " + theCheese.getName() + " (id=" + theCheese.getCheeseId() + ")");
 
@@ -72,9 +74,20 @@ public class CheeseController {
     }
 
     @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.POST)
-    public String processEditForm(@RequestParam int cheeseId, @RequestParam String name, @RequestParam String description) {
-        CheeseData.getById(cheeseId).setName(name);
-        CheeseData.getById(cheeseId).setDescription(description);
+    public String processEditForm(@PathVariable int cheeseId, @ModelAttribute @Valid Cheese aCheese, Errors errors, Model model) {
+
+        if (errors.hasErrors()) {
+            Cheese theCheese = CheeseData.getById(cheeseId);
+            model.addAttribute("cheeseTypes", CheeseType.values());
+            // model.addAttribute("cheese", theCheese);
+            model.addAttribute("title", "Edit Cheese " + theCheese.getName() + " (id=" + theCheese.getCheeseId() + ")");
+            return "cheese/edit";
+        }
+
+        CheeseData.getById(cheeseId).setName(aCheese.getName());
+        CheeseData.getById(cheeseId).setDescription(aCheese.getDescription());
+        CheeseData.getById(cheeseId).setType(aCheese.getType());
+        CheeseData.getById(cheeseId).setRating(aCheese.getRating());
 
         // "redirect:" doesn't work...
         return "redirect:/cheese";
